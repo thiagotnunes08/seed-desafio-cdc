@@ -3,9 +3,11 @@ package br.com.deveficiente.novoautor.autor;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-import static java.time.LocalDateTime.*;
+import static java.time.LocalDateTime.now;
 
 @Entity
+@Table(uniqueConstraints =
+@UniqueConstraint(name = "UK_EMAIL", columnNames = "email"))
 public class Autor {
 
     @Id
@@ -37,14 +39,12 @@ public class Autor {
         this.descricao = descricao;
     }
 
-    @Override
-    public String toString() {
-        return "Autor{" +
-                "id=" + id +
-                ", nome='" + nome + '\'' +
-                ", email='" + email + '\'' +
-                ", descricao='" + descricao + '\'' +
-                ", criadoEm=" + criadoEm +
-                '}';
+    public String getNome() {
+        return nome;
+    }
+
+
+    public String getDescricao() {
+        return descricao;
     }
 }

@@ -1,5 +1,6 @@
 package br.com.deveficiente.novoautor.autor;
 
+import br.com.deveficiente.novoautor.compartilhado.CampoUnico;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
@@ -11,6 +12,7 @@ public class NovoAutorRequest {
     private String nome;
     @NotBlank
     @Email
+    @CampoUnico(fieldName = "email",domainClass = Autor.class,message = "campo email deve ser único")
     private String email;
     @Length(max = 400)
     @NotBlank
@@ -30,6 +32,6 @@ public class NovoAutorRequest {
     }
 
     public Autor toModel() {
-        return new Autor(nome,email,descricao);
+        return new Autor(nome, email, descricao);
     }
 }

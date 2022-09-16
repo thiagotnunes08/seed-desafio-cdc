@@ -1,29 +1,31 @@
 package br.com.deveficiente.novoautor.autor;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
-
+//max 7
+//total = 4
 @RestController
 @RequestMapping("/api/autores")
 public class NovoAutorController {
-    @PersistenceContext
-    private EntityManager manager;
 
-    @PostMapping
-    @Transactional
+    @Autowired        //1
+    private final AutorRepository repository;
+
+    public NovoAutorController(AutorRepository repository) {
+        this.repository = repository;
+
+    }
+
+    @PostMapping                              //2
     public void cadastra(@Valid @RequestBody NovoAutorRequest request){
 
+        //4
         Autor novoAutor = request.toModel();
 
-        manager.persist(novoAutor);
+        repository.save(novoAutor);
 
     }
 }

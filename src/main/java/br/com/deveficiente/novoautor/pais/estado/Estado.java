@@ -23,4 +23,8 @@ public class Estado {
     @Deprecated // USO HIBERNATE!
     public Estado() {
     }
+
+    public boolean pertenceAPais(Pais pais) {
+       return this.pais.equals(pais);
+    }
 }

@@ -5,9 +5,11 @@ import br.com.deveficiente.novoautor.pais.estado.Estado;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
+import java.util.function.Function;
 
 @Entity
 public class Compra {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,11 +47,11 @@ public class Compra {
 
     @ManyToOne
     private Estado estado;
-
-    @OneToOne(cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
+    @OneToOne(mappedBy = "compra",cascade = CascadeType.PERSIST)
     private Pedido pedido;
 
-    public Compra(String nome, String sobrenome, String email, String documento, String telefone, String endereco, String complemento, String cidade, String cep, Pais pais,Pedido pedido) {
+
+    public Compra(String nome, String sobrenome, String email, String documento, String telefone, String endereco, String complemento, String cidade, String cep, Pais pais, Function<Compra, Pedido> funcaoCriacaoPedido) {
         this.nome = nome;
         this.sobrenome = sobrenome;
         this.email = email;
@@ -60,14 +62,12 @@ public class Compra {
         this.cidade = cidade;
         this.cep = cep;
         this.pais = pais;
-        this.pedido = pedido;
+        this.pedido = funcaoCriacaoPedido.apply(this);
     }
 
     @Deprecated // HIBERNATE
     public Compra() {
     }
-
-
 
     public String getNome() {
         return nome;
@@ -79,6 +79,20 @@ public class Compra {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getComplemento() {
+        return complemento;
+    }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public void setEstado(Estado estado) {
+        Assert.notNull(pais,"erro ao associar estado ao país. Este é nulo");
+        Assert.isTrue(estado.pertenceAPais(pais),"esse estado não pertece a este país!");
+        this.estado = estado;
     }
 
     @Override
@@ -100,9 +114,7 @@ public class Compra {
                 '}';
     }
 
-    public void setEstado(Estado estado) {
-        Assert.notNull(pais,"erro ao associar estado ao país. Este é nulo");
-        Assert.isTrue(estado.pertenceAPais(pais),"esse estado não pertece a este país!");
-        this.estado = estado;
+    public String getCidade() {
+        return cidade;
     }
 }

@@ -13,6 +13,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class NovoCompraRequest {
 
@@ -53,6 +55,9 @@ public class NovoCompraRequest {
 
     public Compra toModel(EntityManager manager) {
 
+
+        Function<Compra,Pedido> funcaoCriacaoPedido = pedido.toModel(manager);
+
         Optional<Pais> possivelPais = Optional.ofNullable(manager.find(Pais.class, idPais));
 
         Optional<Livro> possivelLivro = Optional
@@ -65,15 +70,17 @@ public class NovoCompraRequest {
 
         Pais pais = possivelPais.get();
 
-        Pedido novoPedido = pedido.toModel();
-
-        Compra compra = new Compra(nome, sobrenome, email, documento, telefone, endereco, complemento, cidade, cep, pais, novoPedido);
+        Compra compra = new Compra(nome, sobrenome, email, documento, telefone, endereco, complemento, cidade, cep, pais,funcaoCriacaoPedido);
 
         if (idEstado != null){
             compra.setEstado(manager.find(Estado.class,idEstado));
         }
 
         return compra;
+    }
+
+    public boolean temEstado() {
+        return idEstado != null;
     }
 
     public String getNome() {
@@ -140,9 +147,5 @@ public class NovoCompraRequest {
                 ", idEstado=" + idEstado +
                 ", pedido=" + pedido +
                 '}';
-    }
-
-    public boolean temEstado() {
-        return idEstado != null;
     }
 }

@@ -1,23 +1,28 @@
 package br.com.deveficiente.novoautor.compra;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import br.com.deveficiente.novoautor.livro.Livro;
 
-@Entity
+import javax.persistence.*;
+import javax.validation.constraints.Positive;
+import java.math.BigDecimal;
+import java.util.Objects;
+
+@Embeddable
 public class Item {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    private Long livroId;
+
+    @ManyToOne(optional = false)
+    private Livro livro;
+    @Positive
     private int quantidade;
+    @Positive
+    private  BigDecimal precoMomento;
 
-    public Item(Long livroId, int quantidade) {
-        this.livroId = livroId;
+    public Item(Livro livro, int quantidade) {
+        this.livro = livro;
         this.quantidade = quantidade;
+        this.precoMomento = livro.getPreco();
     }
 
     @Deprecated
@@ -25,11 +30,28 @@ public class Item {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return livro.equals(item.livro);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(livro);
+    }
+
+    public BigDecimal total(){
+        return precoMomento.multiply(new BigDecimal(quantidade));
+    }
+
+    @Override
     public String toString() {
         return "Item{" +
-                "id=" + id +
-                ", livroId=" + livroId +
+                "livro=" + livro +
                 ", quantidade=" + quantidade +
+                ", precoMomento=" + precoMomento +
                 '}';
     }
 }

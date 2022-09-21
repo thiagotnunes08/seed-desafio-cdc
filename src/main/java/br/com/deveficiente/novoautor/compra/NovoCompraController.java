@@ -2,6 +2,7 @@ package br.com.deveficiente.novoautor.compra;
 
 import br.com.deveficiente.novoautor.pais.EstadoPertenceAoPaisValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,12 +28,14 @@ public class NovoCompraController {
 
     @PostMapping
     @Transactional
-    public void cadastra(@Valid @RequestBody NovoCompraRequest request){
+    public ResponseEntity<EnderecoCompraResponse> cadastra(@Valid @RequestBody NovoCompraRequest request){
 
         Compra novoCompra = request.toModel(manager);
 
-        System.out.println(novoCompra);
 
+        manager.persist(novoCompra);
+
+        return ResponseEntity.status(201).body(new EnderecoCompraResponse(novoCompra));
 
     }
 }

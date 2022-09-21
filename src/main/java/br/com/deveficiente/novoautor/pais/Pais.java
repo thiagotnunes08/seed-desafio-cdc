@@ -1,8 +1,10 @@
 package br.com.deveficiente.novoautor.pais;
 
+import br.com.deveficiente.novoautor.pais.estado.Estado;
 import org.hibernate.procedure.spi.ParameterRegistrationImplementor;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -34,4 +36,13 @@ public class Pais {
     public int hashCode() {
         return Objects.hash(nome);
     }
+
+    @Override
+    public String toString() {
+        return "Pais{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                '}';
+    }
+
 }

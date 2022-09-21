@@ -1,20 +1,28 @@
 package br.com.deveficiente.novoautor.compra;
 
-import java.math.BigDecimal;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 public class ItensRequest {
 
+    @NotNull
     private Long idLivro;
-    private Integer quantidade;
-
+    @Positive
+    private int quantidade;
 
     public Long getIdLivro() {
         return idLivro;
     }
 
-    public Integer getQuantidade() {
+    public int getQuantidade() {
         return quantidade;
     }
 
-
+    @Override
+    public String toString() {
+        return "ItensRequest{" +
+                "idLivro=" + idLivro +
+                ", quantidade=" + quantidade +
+                '}';
+    }
 }

@@ -4,7 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.math.BigDecimal;
 
 @Entity
 public class Item {
@@ -12,35 +11,25 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long idLivro;
-    private Integer quantidade;
-    
-    private BigDecimal valorUnitario;
-    private BigDecimal total;
 
-    public Item(Long idLivro, Integer quantidade,BigDecimal valorUnitario) {
-        this.idLivro = idLivro;
+    private Long livroId;
+    private int quantidade;
+
+    public Item(Long livroId, int quantidade) {
+        this.livroId = livroId;
         this.quantidade = quantidade;
-        this.valorUnitario = valorUnitario;
-        this.total = calculaTotal();
-        
     }
 
-    @Deprecated // HINERNATE!
+    @Deprecated
     public Item() {
     }
 
-
-    public BigDecimal calculaTotal(){
-
-        return new BigDecimal(String.valueOf(valorUnitario)).multiply(new BigDecimal(quantidade));
-    }
-
-    public Long getIdLivro() {
-        return idLivro;
-    }
-
-    public Integer getQuantidade() {
-        return quantidade;
+    @Override
+    public String toString() {
+        return "Item{" +
+                "id=" + id +
+                ", livroId=" + livroId +
+                ", quantidade=" + quantidade +
+                '}';
     }
 }

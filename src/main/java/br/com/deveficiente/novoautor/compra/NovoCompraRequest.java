@@ -1,18 +1,20 @@
-package br.com.deveficiente.novoautor.cliente;
+package br.com.deveficiente.novoautor.compra;
 
 import br.com.deveficiente.novoautor.compartilhado.CPForCNPJ;
+import br.com.deveficiente.novoautor.livro.Livro;
 import br.com.deveficiente.novoautor.pais.Pais;
 import br.com.deveficiente.novoautor.pais.estado.Estado;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityManager;
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
-public class NovoClienteRequest {
+public class NovoCompraRequest {
 
     @NotBlank
     private String nome;
@@ -41,26 +43,37 @@ public class NovoClienteRequest {
     @NotNull
     private Long idPais;
 
-    @NotNull
+
     private Long idEstado;
 
+    @Valid
+    @NotNull
+    private NovoPedidoRequest pedido;
 
-    public Cliente toModel(EntityManager manager) {
+
+    public Compra toModel(EntityManager manager) {
 
         Optional<Pais> possivelPais = Optional.ofNullable(manager.find(Pais.class, idPais));
 
+        Optional<Livro> possivelLivro = Optional
+                .ofNullable(manager.find(Livro.class,pedido.getItens().get(0).getIdLivro()));
 
-        Optional<Estado> possivelEstado = Optional.ofNullable(manager.find(Estado.class, idEstado));
 
-        if (possivelPais.isEmpty() || possivelEstado.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"País ou Estado informado incorretamente!");
+        if (possivelLivro.isEmpty() || possivelPais.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Livro ou país inválidos!");
         }
 
         Pais pais = possivelPais.get();
 
-        Estado estado = possivelEstado.get();
+        Pedido novoPedido = pedido.toModel();
 
-        return new Cliente(nome,sobrenome,email,documento,telefone,endereco,complemento,cidade,cep,pais,estado);
+        Compra compra = new Compra(nome, sobrenome, email, documento, telefone, endereco, complemento, cidade, cep, pais, novoPedido);
+
+        if (idEstado != null){
+            compra.setEstado(manager.find(Estado.class,idEstado));
+        }
+
+        return compra;
     }
 
     public String getNome() {
@@ -105,5 +118,31 @@ public class NovoClienteRequest {
 
     public String getCep() {
         return cep;
+    }
+
+    public NovoPedidoRequest getPedido() {
+        return pedido;
+    }
+
+    @Override
+    public String toString() {
+        return "NovoCompraRequest{" +
+                "nome='" + nome + '\'' +
+                ", sobrenome='" + sobrenome + '\'' +
+                ", email='" + email + '\'' +
+                ", documento='" + documento + '\'' +
+                ", telefone='" + telefone + '\'' +
+                ", endereco='" + endereco + '\'' +
+                ", cidade='" + cidade + '\'' +
+                ", complemento='" + complemento + '\'' +
+                ", cep='" + cep + '\'' +
+                ", idPais=" + idPais +
+                ", idEstado=" + idEstado +
+                ", pedido=" + pedido +
+                '}';
+    }
+
+    public boolean temEstado() {
+        return idEstado != null;
     }
 }

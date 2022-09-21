@@ -1,5 +1,6 @@
-package br.com.deveficiente.novoautor.cliente;
+package br.com.deveficiente.novoautor.compra;
 
+import br.com.deveficiente.novoautor.pais.EstadoPertenceAoPaisValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -10,8 +11,8 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("api/clientes")
-public class NovoClienteController {
+@RequestMapping("api/compras")
+public class NovoCompraController {
 
     @PersistenceContext
     private EntityManager manager;
@@ -26,12 +27,11 @@ public class NovoClienteController {
 
     @PostMapping
     @Transactional
-    public void cadastra(@Valid @RequestBody NovoClienteRequest request){
+    public void cadastra(@Valid @RequestBody NovoCompraRequest request){
 
-        Cliente novoCliente = request.toModel(manager);
+        Compra novoCompra = request.toModel(manager);
 
-
-        manager.persist(novoCliente);
+        System.out.println(novoCompra);
 
 
     }

@@ -1,5 +1,7 @@
 package br.com.deveficiente.novoautor.compra;
 
+import br.com.deveficiente.novoautor.cupom.CumpoRepository;
+import br.com.deveficiente.novoautor.cupom.Cupom;
 import br.com.deveficiente.novoautor.pais.EstadoPertenceAoPaisValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,9 @@ public class NovoCompraController {
     private EntityManager manager;
 
     @Autowired
+    private CumpoRepository repository;
+
+    @Autowired
     private EstadoPertenceAoPaisValidator validator;
 
     @InitBinder
@@ -30,7 +35,7 @@ public class NovoCompraController {
     @Transactional
     public ResponseEntity<EnderecoCompraResponse> cadastra(@Valid @RequestBody NovoCompraRequest request){
 
-        Compra novoCompra = request.toModel(manager);
+        Compra novoCompra = request.toModel(manager,repository);
 
 
         manager.persist(novoCompra);

@@ -1,6 +1,8 @@
 package br.com.deveficiente.novoautor.compra;
 
 import br.com.deveficiente.novoautor.compartilhado.CPForCNPJ;
+import br.com.deveficiente.novoautor.cupom.CumpoRepository;
+import br.com.deveficiente.novoautor.cupom.Cupom;
 import br.com.deveficiente.novoautor.livro.Livro;
 import br.com.deveficiente.novoautor.pais.Pais;
 import br.com.deveficiente.novoautor.pais.estado.Estado;
@@ -52,16 +54,20 @@ public class NovoCompraRequest {
     @NotNull
     private NovoPedidoRequest pedido;
 
+    private String codigoCupom;
 
-    public Compra toModel(EntityManager manager) {
+
+    public Compra toModel(EntityManager manager, CumpoRepository repository) {
 
 
         Function<Compra,Pedido> funcaoCriacaoPedido = pedido.toModel(manager);
+
 
         Optional<Pais> possivelPais = Optional.ofNullable(manager.find(Pais.class, idPais));
 
         Optional<Livro> possivelLivro = Optional
                 .ofNullable(manager.find(Livro.class,pedido.getItens().get(0).getIdLivro()));
+
 
 
         if (possivelLivro.isEmpty() || possivelPais.isEmpty()){
@@ -72,8 +78,14 @@ public class NovoCompraRequest {
 
         Compra compra = new Compra(nome, sobrenome, email, documento, telefone, endereco, complemento, cidade, cep, pais,funcaoCriacaoPedido);
 
-        if (idEstado != null){
+        if (idEstado != null ){
+
             compra.setEstado(manager.find(Estado.class,idEstado));
+        }
+
+        if(codigoCupom != null){
+            compra.setCupom(repository.findByCodigo(codigoCupom));
+
         }
 
         return compra;
@@ -129,6 +141,10 @@ public class NovoCompraRequest {
 
     public NovoPedidoRequest getPedido() {
         return pedido;
+    }
+
+    public String getIdCupom() {
+        return codigoCupom;
     }
 
     @Override

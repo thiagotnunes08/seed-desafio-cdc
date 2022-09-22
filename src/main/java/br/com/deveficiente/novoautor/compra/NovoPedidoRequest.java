@@ -19,7 +19,7 @@ public class NovoPedidoRequest {
     @Size(min = 1)
     private List<ItensRequest> itens;
 
-    public Function<Compra,Pedido> toModel(EntityManager manager) {
+    public Function<Compra, Pedido> toModel(EntityManager manager) {
 
         Set<Item> itensCalculados = this.itens
                 .stream()
@@ -28,14 +28,12 @@ public class NovoPedidoRequest {
 
         return (compra) -> {
 
-            Pedido pedido = new Pedido(compra,itensCalculados);
+            Pedido pedido = new Pedido(compra, itensCalculados);
 
-            Assert.isTrue(pedido.totalIgual(total),"o total enviado não corresponde ao total real!");
+            Assert.isTrue(pedido.totalIgual(total), "o total enviado não corresponde ao total real!");
             return pedido;
 
-
         };
-
 
     }
 

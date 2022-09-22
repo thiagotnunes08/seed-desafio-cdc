@@ -1,5 +1,6 @@
 package br.com.deveficiente.novoautor.compra;
 
+import br.com.deveficiente.novoautor.cupom.Cupom;
 import br.com.deveficiente.novoautor.pais.Pais;
 import br.com.deveficiente.novoautor.pais.estado.Estado;
 import org.springframework.util.Assert;
@@ -50,6 +51,10 @@ public class Compra {
     @OneToOne(mappedBy = "compra",cascade = CascadeType.PERSIST)
     private Pedido pedido;
 
+    @OneToOne
+    @Column(updatable = false)
+    private Cupom cupom;
+
 
     public Compra(String nome, String sobrenome, String email, String documento, String telefone, String endereco, String complemento, String cidade, String cep, Pais pais, Function<Compra, Pedido> funcaoCriacaoPedido) {
         this.nome = nome;
@@ -93,6 +98,12 @@ public class Compra {
         Assert.notNull(pais,"erro ao associar estado ao país. Este é nulo");
         Assert.isTrue(estado.pertenceAPais(pais),"esse estado não pertece a este país!");
         this.estado = estado;
+    }
+
+    public void setCupom(Cupom cupom) {
+        Assert.notNull(cupom,"cupom não é válido");
+        Assert.isTrue(!cupom.cupomExpirado(),"cupom não é válido");
+        this.cupom = cupom;
     }
 
     @Override

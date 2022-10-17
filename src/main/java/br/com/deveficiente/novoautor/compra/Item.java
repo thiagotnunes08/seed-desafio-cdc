@@ -1,5 +1,6 @@
 package br.com.deveficiente.novoautor.compra;
 
+import br.com.deveficiente.novoautor.cupom.Cupom;
 import br.com.deveficiente.novoautor.livro.Livro;
 
 import javax.persistence.*;
@@ -9,8 +10,6 @@ import java.util.Objects;
 
 @Embeddable
 public class Item {
-
-
 
     @ManyToOne(optional = false)
     private Livro livro;
@@ -54,4 +53,18 @@ public class Item {
                 ", precoMomento=" + precoMomento +
                 '}';
     }
+
+    public Livro getLivro() {
+        return livro;
+    }
+
+    public int getQuantidade() {
+        return quantidade;
+    }
+
+    public BigDecimal getPrecoMomento() {
+        return precoMomento;
+    }
+
+
 }

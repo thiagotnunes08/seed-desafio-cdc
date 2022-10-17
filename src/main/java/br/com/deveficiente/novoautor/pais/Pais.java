@@ -45,4 +45,7 @@ public class Pais {
                 '}';
     }
 
+    public String getName() {
+        return nome;
+    }
 }

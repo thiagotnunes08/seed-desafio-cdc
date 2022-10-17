@@ -44,4 +44,6 @@ public class NovoCupomRequest {
     public Cupom toModel() {
         return new Cupom(codigo,percentual,validoAte);
     }
+
+
 }

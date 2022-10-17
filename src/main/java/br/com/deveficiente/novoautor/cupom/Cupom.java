@@ -3,7 +3,6 @@ package br.com.deveficiente.novoautor.cupom;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.Period;
 
 @Entity
 public class Cupom {
@@ -18,12 +17,15 @@ public class Cupom {
     @Column(nullable = false)
     private LocalDate validoAte;
 
+    @Embedded
+    private CupomAplicado cupomAplicado;
 
     public Cupom(String codigo, BigDecimal percentual, LocalDate validoAte) {
         this.codigo = codigo;
         this.percentual = percentual;
         this.validoAte = validoAte;
     }
+
     @Deprecated
     public Cupom() {
     }
@@ -38,11 +40,25 @@ public class Cupom {
                 '}';
     }
 
-    public boolean cupomExpirado(){
+    public boolean cupomValido(){
 
-    int validadeCupom = Period.between(this.validoAte,LocalDate.now()).getDays();
+    return LocalDate.now().compareTo(this.validoAte) <= 0;
 
-    return validadeCupom > validoAte.getDayOfMonth();
+    }
 
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public BigDecimal getPercentual() {
+        return percentual;
+    }
+
+    public LocalDate getValidoAte() {
+        return validoAte;
+    }
+
+    public CupomAplicado getCupomAplicado() {
+        return cupomAplicado;
     }
 }

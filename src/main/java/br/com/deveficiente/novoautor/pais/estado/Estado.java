@@ -38,4 +38,7 @@ public class Estado {
     }
 
 
+    public String getName() {
+        return nome;
+    }
 }

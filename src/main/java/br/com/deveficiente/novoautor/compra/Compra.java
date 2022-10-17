@@ -1,12 +1,15 @@
 package br.com.deveficiente.novoautor.compra;
 
 import br.com.deveficiente.novoautor.cupom.Cupom;
+import br.com.deveficiente.novoautor.cupom.CupomAplicado;
 import br.com.deveficiente.novoautor.pais.Pais;
 import br.com.deveficiente.novoautor.pais.estado.Estado;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 @Entity
 public class Compra {
@@ -48,12 +51,10 @@ public class Compra {
 
     @ManyToOne
     private Estado estado;
-    @OneToOne(mappedBy = "compra",cascade = CascadeType.PERSIST)
+    @OneToOne(mappedBy = "compra", cascade = CascadeType.PERSIST)
     private Pedido pedido;
-
-    @OneToOne
-    @Column(updatable = false)
-    private Cupom cupom;
+    @Embedded
+    private CupomAplicado cupomAplicado;
 
 
     public Compra(String nome, String sobrenome, String email, String documento, String telefone, String endereco, String complemento, String cidade, String cep, Pais pais, Function<Compra, Pedido> funcaoCriacaoPedido) {
@@ -95,15 +96,15 @@ public class Compra {
     }
 
     public void setEstado(Estado estado) {
-        Assert.notNull(pais,"erro ao associar estado ao país. Este é nulo");
-        Assert.isTrue(estado.pertenceAPais(pais),"esse estado não pertece a este país!");
+        Assert.notNull(pais, "erro ao associar estado ao país. Este é nulo");
+        Assert.isTrue(estado.pertenceAPais(pais), "esse estado não pertece a este país!");
         this.estado = estado;
     }
 
-    public void setCupom(Cupom cupom) {
-        Assert.notNull(cupom,"cupom não é válido");
-        Assert.isTrue(!cupom.cupomExpirado(),"cupom não é válido");
-        this.cupom = cupom;
+    public void aplicaCupom(Cupom cupom) {
+        Assert.isTrue(cupom.cupomValido(), "cupom não é válido");
+        Assert.isNull(this.cupomAplicado, "Você não pode trocar um cupom de uma compra!");
+        this.cupomAplicado = new CupomAplicado(cupom);
     }
 
     @Override
@@ -122,10 +123,61 @@ public class Compra {
                 ", pais=" + pais +
                 ", estado=" + estado +
                 ", pedido=" + pedido +
+                ", cupomAplicado=" + cupomAplicado +
                 '}';
     }
 
     public String getCidade() {
         return cidade;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getSobrenome() {
+        return sobrenome;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public Pais getPais() {
+        return pais;
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public Pedido getPedido() {
+        return pedido;
+    }
+
+    public CupomAplicado getCupomAplicado() {
+        return cupomAplicado;
+    }
+
+    public BigDecimal descontoCupom() {
+
+        BigDecimal valorTotal = (BigDecimal) pedido.getItens().stream().map(Item::getPrecoMomento);
+
+        if (cupomAplicado != null) {
+
+            BigDecimal valorDesconto = valorTotal.multiply(new BigDecimal(String.valueOf(cupomAplicado.getPercentualAtual())).divide(new BigDecimal("100")));
+
+            valorTotal = valorTotal.subtract(valorDesconto);
+        }
+        System.out.println(valorTotal + "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%################");
+
+        return valorTotal;
+
+    }
+
+
 }

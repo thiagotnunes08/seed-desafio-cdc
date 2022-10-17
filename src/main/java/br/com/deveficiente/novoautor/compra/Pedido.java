@@ -51,4 +51,12 @@ public class Pedido {
                 ", itens=" + itens +
                 '}';
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Set<Item> getItens() {
+        return itens;
+    }
 }

@@ -1,7 +1,6 @@
 package br.com.deveficiente.novoautor.compra;
 
-import br.com.deveficiente.novoautor.cupom.CumpoRepository;
-import br.com.deveficiente.novoautor.cupom.Cupom;
+import br.com.deveficiente.novoautor.cupom.CupomRepository;
 import br.com.deveficiente.novoautor.pais.EstadoPertenceAoPaisValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +20,18 @@ public class NovoCompraController {
     private EntityManager manager;
 
     @Autowired
-    private CumpoRepository repository;
+    private CupomRepository repository;
 
     @Autowired
     private EstadoPertenceAoPaisValidator validator;
 
+    @Autowired
+    private CupomValidoValidator cupomValidoValidator;
+
+
     @InitBinder
     public void init(WebDataBinder binder){
+        binder.addValidators(cupomValidoValidator);
         binder.addValidators(validator);
     }
 
@@ -37,6 +41,8 @@ public class NovoCompraController {
 
         Compra novoCompra = request.toModel(manager,repository);
 
+
+        System.out.println(novoCompra);
 
         manager.persist(novoCompra);
 

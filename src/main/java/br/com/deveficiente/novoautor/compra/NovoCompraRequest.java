@@ -1,12 +1,14 @@
 package br.com.deveficiente.novoautor.compra;
 
 import br.com.deveficiente.novoautor.compartilhado.CPForCNPJ;
-import br.com.deveficiente.novoautor.cupom.CumpoRepository;
+import br.com.deveficiente.novoautor.compartilhado.CampoExistente;
+import br.com.deveficiente.novoautor.cupom.CupomRepository;
 import br.com.deveficiente.novoautor.cupom.Cupom;
 import br.com.deveficiente.novoautor.livro.Livro;
 import br.com.deveficiente.novoautor.pais.Pais;
 import br.com.deveficiente.novoautor.pais.estado.Estado;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityManager;
@@ -16,7 +18,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+
+//C.I = 10
 
 public class NovoCompraRequest {
 
@@ -51,40 +54,44 @@ public class NovoCompraRequest {
     private Long idEstado;
 
     @Valid
-    @NotNull
+    @NotNull //1
     private NovoPedidoRequest pedido;
-
+    @CampoExistente(domainClass = Cupom.class,fieldName = "codigo")
     private String codigoCupom;
 
+                                                        //2
+    public Compra toModel(EntityManager manager, CupomRepository repository) {
 
-    public Compra toModel(EntityManager manager, CumpoRepository repository) {
-
-
+                    //3   //4
         Function<Compra,Pedido> funcaoCriacaoPedido = pedido.toModel(manager);
 
-
+                    //5
         Optional<Pais> possivelPais = Optional.ofNullable(manager.find(Pais.class, idPais));
 
+                    //6
         Optional<Livro> possivelLivro = Optional
                 .ofNullable(manager.find(Livro.class,pedido.getItens().get(0).getIdLivro()));
 
 
-
+                //7
         if (possivelLivro.isEmpty() || possivelPais.isEmpty()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Livro ou país inválidos!");
         }
 
         Pais pais = possivelPais.get();
-
+                                                                                                                                //10
         Compra compra = new Compra(nome, sobrenome, email, documento, telefone, endereco, complemento, cidade, cep, pais,funcaoCriacaoPedido);
 
+
+        //8
         if (idEstado != null ){
 
             compra.setEstado(manager.find(Estado.class,idEstado));
         }
-
-        if(codigoCupom != null){
-            compra.setCupom(repository.findByCodigo(codigoCupom));
+            //9
+        if(StringUtils.hasLength(codigoCupom)){
+            Cupom cupom = repository.getByCodigo(codigoCupom);
+            compra.aplicaCupom(cupom);
 
         }
 
@@ -143,8 +150,8 @@ public class NovoCompraRequest {
         return pedido;
     }
 
-    public String getIdCupom() {
-        return codigoCupom;
+    public Optional<String> getCodigoCupom() {
+        return Optional.ofNullable(codigoCupom);
     }
 
     @Override
@@ -164,4 +171,8 @@ public class NovoCompraRequest {
                 ", pedido=" + pedido +
                 '}';
     }
+
+
+
+
 }

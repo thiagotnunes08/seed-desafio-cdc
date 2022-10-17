@@ -58,6 +58,12 @@ public class Livro {
     public Livro() {
     }
 
+    public Livro(Long id, String nome) {
+        this.id = id;
+        this.titulo = nome;
+    }
+
+
     public Long getId() {
         return id;
     }

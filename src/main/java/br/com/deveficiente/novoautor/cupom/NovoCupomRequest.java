@@ -16,7 +16,7 @@ public class NovoCupomRequest {
     @NotNull
     @DecimalMax(value = "100")
     private BigDecimal percentual;
-    @Future
+    @FutureOrPresent
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate validoAte;
 

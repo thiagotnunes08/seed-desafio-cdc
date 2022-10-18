@@ -20,6 +20,8 @@ public class Pais {
         this.nome = nome;
     }
 
+
+
     @Deprecated // USO HIBERNATE!
     public Pais() {
     }
@@ -48,4 +50,5 @@ public class Pais {
     public String getName() {
         return nome;
     }
+
 }

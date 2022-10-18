@@ -23,28 +23,15 @@ import java.util.Optional;
 @RequestMapping("/api/livros")
 public class NovoLivroController {
 
-    @Autowired
-    private LivroRepository livroRepository;
+    @PersistenceContext
+   private EntityManager manager;
 
-    @Autowired
-    private AutorRepository autorRepository;
+    @PostMapping
+    public void cadastra(@Valid @RequestBody NovoLivroRequest request) {
 
-    @Autowired
-    private CategoriaRepository categoriaRepository;
+        Livro novoLivro = request.toModel(manager);
 
-
-    @PostMapping("/categorias/{categoriaId}/autores/{autorId}")
-    public void cadastra(@PathVariable Long categoriaId, @PathVariable Long autorId, @Valid @RequestBody NovoLivroRequest request) {
-
-        Categoria possiveCategoria = categoriaRepository
-                .findById(categoriaId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Categoria nao encotrada no sistema!"));
-
-        Autor possivelAutor = autorRepository
-                .findById(autorId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Autor nao encotrado no sistema!"));
-
-        Livro novoLivro = request.toModel(possiveCategoria,possivelAutor);
-
-        livroRepository.save(novoLivro);
+        manager.persist(novoLivro);
 
 
     }

@@ -1,5 +1,7 @@
 package br.com.deveficiente.novoautor.cupom;
 
+import org.springframework.util.Assert;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -23,6 +25,7 @@ public class Cupom {
     public Cupom(String codigo, BigDecimal percentual, LocalDate validoAte) {
         this.codigo = codigo;
         this.percentual = percentual;
+        Assert.isTrue(validoAte.compareTo(LocalDate.now()) >= 0,"a validade teria que estar no presente ou no futuro");
         this.validoAte = validoAte;
     }
 
@@ -61,4 +64,6 @@ public class Cupom {
     public CupomAplicado getCupomAplicado() {
         return cupomAplicado;
     }
+
+
 }

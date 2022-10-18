@@ -7,7 +7,10 @@ import br.com.deveficiente.novoautor.cupom.Cupom;
 import br.com.deveficiente.novoautor.livro.Livro;
 import br.com.deveficiente.novoautor.pais.Pais;
 import br.com.deveficiente.novoautor.pais.estado.Estado;
+import org.hibernate.validator.internal.constraintvalidators.hv.br.CNPJValidator;
+import org.hibernate.validator.internal.constraintvalidators.hv.br.CPFValidator;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -56,40 +59,56 @@ public class NovoCompraRequest {
     @Valid
     @NotNull //1
     private NovoPedidoRequest pedido;
-    @CampoExistente(domainClass = Cupom.class,fieldName = "codigo")
+    @CampoExistente(domainClass = Cupom.class, fieldName = "codigo")
     private String codigoCupom;
 
-                                                        //2
+    public NovoCompraRequest(String nome, String sobrenome, String email, String documento, String telefone, String endereco, String cidade, String complemento, String cep, Long idPais, Long idEstado, NovoPedidoRequest pedido, String codigoCupom) {
+        this.nome = nome;
+        this.sobrenome = sobrenome;
+        this.email = email;
+        this.documento = documento;
+        this.telefone = telefone;
+        this.endereco = endereco;
+        this.cidade = cidade;
+        this.complemento = complemento;
+        this.cep = cep;
+        this.idPais = idPais;
+        this.idEstado = idEstado;
+        this.pedido = pedido;
+        this.codigoCupom = codigoCupom;
+    }
+
+    //2
     public Compra toModel(EntityManager manager, CupomRepository repository) {
 
-                    //3   //4
-        Function<Compra,Pedido> funcaoCriacaoPedido = pedido.toModel(manager);
+        //3   //4
+        Function<Compra, Pedido> funcaoCriacaoPedido = pedido.toModel(manager);
 
-                    //5
+        //5
         Optional<Pais> possivelPais = Optional.ofNullable(manager.find(Pais.class, idPais));
 
-                    //6
+        //6
         Optional<Livro> possivelLivro = Optional
-                .ofNullable(manager.find(Livro.class,pedido.getItens().get(0).getIdLivro()));
+                .ofNullable(manager.find(Livro.class, pedido.getItens().get(0).getIdLivro()));
 
 
-                //7
-        if (possivelLivro.isEmpty() || possivelPais.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Livro ou país inválidos!");
+        //7
+        if (possivelLivro.isEmpty() || possivelPais.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Livro ou país inválidos!");
         }
 
         Pais pais = possivelPais.get();
-                                                                                                                                //10
-        Compra compra = new Compra(nome, sobrenome, email, documento, telefone, endereco, complemento, cidade, cep, pais,funcaoCriacaoPedido);
+        //10
+        Compra compra = new Compra(nome, sobrenome, email, documento, telefone, endereco, complemento, cidade, cep, pais, funcaoCriacaoPedido);
 
 
         //8
-        if (idEstado != null ){
+        if (idEstado != null) {
 
-            compra.setEstado(manager.find(Estado.class,idEstado));
+            compra.setEstado(manager.find(Estado.class, idEstado));
         }
-            //9
-        if(StringUtils.hasLength(codigoCupom)){
+        //9
+        if (StringUtils.hasLength(codigoCupom)) {
             Cupom cupom = repository.getByCodigo(codigoCupom);
             compra.aplicaCupom(cupom);
 
@@ -98,8 +117,21 @@ public class NovoCompraRequest {
         return compra;
     }
 
+    public boolean docValido() {
+        Assert.hasLength(documento, "documento deve ser válido!");
+        CPFValidator cpfValidator = new CPFValidator();
+        cpfValidator.initialize(null);
+
+        CNPJValidator cnpjValidator = new CNPJValidator();
+        cnpjValidator.initialize(null);
+
+        return cpfValidator.isValid(documento, null) || cnpjValidator.isValid(documento, null);
+
+
+    }
+
     public boolean temEstado() {
-        return idEstado != null;
+        return Optional.ofNullable(idEstado).isPresent();
     }
 
     public String getNome() {
@@ -172,7 +204,11 @@ public class NovoCompraRequest {
                 '}';
     }
 
+    public void setCodigoCupom(String codigoCupom) {
+        this.codigoCupom = codigoCupom;
+    }
 
-
-
+    public void setIdEstado(Long idEstado) {
+        this.idEstado = idEstado;
+    }
 }

@@ -30,7 +30,7 @@ public class NovoPedidoRequest {
 
             Pedido pedido = new Pedido(compra, itensCalculados);
 
-            Assert.isTrue(pedido.totalIgual(total), "o total enviado não corresponde ao total real!");
+           // Assert.isTrue(pedido.totalIgual(total), "o total enviado não corresponde ao total real!");
             return pedido;
 
         };
@@ -53,5 +53,8 @@ public class NovoPedidoRequest {
                 '}';
     }
 
-
+    public NovoPedidoRequest(BigDecimal total, List<ItensRequest> itens) {
+        this.total = total;
+        this.itens = itens;
+    }
 }

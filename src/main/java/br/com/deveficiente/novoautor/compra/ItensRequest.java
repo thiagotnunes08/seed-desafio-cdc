@@ -47,5 +47,8 @@ public class ItensRequest {
        return new Item(livro, quantidade);
     }
 
-
+    public ItensRequest(Long idLivro, int quantidade) {
+        this.idLivro = idLivro;
+        this.quantidade = quantidade;
+    }
 }

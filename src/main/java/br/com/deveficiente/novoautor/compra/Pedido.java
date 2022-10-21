@@ -40,7 +40,7 @@ public class Pedido {
               .setScale(0, RoundingMode.UP);
 
 
-      return totalPedido.equals(total);
+      return totalPedido.doubleValue() ==  total.doubleValue();
 
     }
 
@@ -59,4 +59,6 @@ public class Pedido {
     public Set<Item> getItens() {
         return itens;
     }
+
+
 }

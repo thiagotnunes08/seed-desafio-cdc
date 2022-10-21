@@ -1,5 +1,6 @@
-package br.com.deveficiente.novoautor.compra;
+package br.com.deveficiente.novoautor.cupom;
 
+import br.com.deveficiente.novoautor.compra.NovoCompraRequest;
 import br.com.deveficiente.novoautor.cupom.CupomRepository;
 import br.com.deveficiente.novoautor.cupom.Cupom;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,10 @@ public class CupomValidoValidator implements Validator {
 
     @Autowired
     private CupomRepository repository;
+
+    public CupomValidoValidator(CupomRepository cupomRepository) {
+        this.repository = cupomRepository;
+    }
 
     @Override
     public boolean supports(Class<?> clazz) {

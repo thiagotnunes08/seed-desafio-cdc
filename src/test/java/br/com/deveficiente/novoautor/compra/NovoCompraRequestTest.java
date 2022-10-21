@@ -10,6 +10,8 @@ import br.com.deveficiente.novoautor.pais.estado.Estado;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 
 import javax.persistence.EntityManager;
@@ -48,9 +50,9 @@ class NovoCompraRequestTest {
     {
         Mockito.when(manager.find(Pais.class, 1L)).thenReturn(pais);
         Mockito.when(manager.find(Livro.class, 1L)).thenReturn(livro);
-        Mockito.when(manager.find(Estado.class, 1L)).thenReturn(new Estado("BR",pais));
+        Mockito.when(manager.find(Estado.class, 1L)).thenReturn(new Estado("BR", pais));
         Mockito.when(repository.getByCodigo("codigo"))
-                .thenReturn(new Cupom("codigo",BigDecimal.TEN,LocalDate.now().plusDays(1)));
+                .thenReturn(new Cupom("codigo", BigDecimal.TEN, LocalDate.now().plusDays(1)));
 
     }
 
@@ -77,40 +79,69 @@ class NovoCompraRequestTest {
         compraRequest.setCodigoCupom("codigo");
         compraRequest.setIdEstado(1L);
 
-        Compra compra = compraRequest.toModel(manager,repository);
+        Compra compra = compraRequest.toModel(manager, repository);
 
         Assertions.assertNotNull(compra);
-        Mockito.verify(manager).find(Estado.class,1L);
+        Mockito.verify(manager).find(Estado.class, 1L);
         Mockito.verify(repository).getByCodigo("codigo");
 
     }
 
     @Test
     @DisplayName("deve cadastrar uma compra com cupom inválido")
-    void test2() {
+    void test2() throws Exception {
 
         compraRequest.setCodigoCupom("codigo");
-
-        Compra compra = compraRequest.toModel(manager,repository);
+        Compra compra = compraRequest.toModel(manager, repository);
 
         Assertions.assertNotNull(compra);
-        Mockito.verify(manager,Mockito.never()).find(Mockito.eq(Estado.class), Mockito.anyLong());
-        Mockito.verify(repository).getByCodigo("codigo");
 
-
+        Mockito.verify(manager, Mockito.never()).find(Mockito.eq(Estado.class), Mockito.anyLong());
+        Mockito.verify(repository.getByCodigo("codigo"));
 
     }
+
 
     @Test
     @DisplayName("deve cadastrar uma compra sem cupom e estado")
-    void test3() {
+    void test3() throws Exception {
 
-        Compra compra = compraRequest.toModel(manager,repository);
+        Compra compra = compraRequest.toModel(manager, repository);
         Assertions.assertNotNull(compra);
 
-        Mockito.verify(manager,Mockito.never()).find(Mockito.eq(Estado.class),Mockito.anyLong());
+        Mockito.verify(manager, Mockito.never()).find(Mockito.eq(Estado.class), Mockito.anyLong());
 
-        Mockito.verify(repository,Mockito.never()).getByCodigo(Mockito.anyString());
+        Mockito.verify(repository, Mockito.never()).getByCodigo(Mockito.anyString());
+
 
     }
+
+    /**
+     * cpf true cnpj false
+     * cpf false cnpj true
+     * cpf false cnpj false
+     */
+    @ParameterizedTest
+    @DisplayName("verifica doc valido")
+    @CsvSource({"51999690052,true", "95239326000182,true", "21342354354351,false"})
+    @Test
+    void test4(String doc, boolean resultadoEsperado) throws Exception {
+        NovoCompraRequest request1 =
+                new NovoCompraRequest("thiago",
+                        "nunes",
+                        "email@email"
+                        ,doc,
+                        "341234123",
+                        "ed"
+                        ,"udi",
+                        "casa"
+                ,"341234",
+                        1L,
+                        1L,
+                        request,
+                        "codigo");
+
+        Assertions.assertEquals(resultadoEsperado,request1.docValido());
+    }
+
 }

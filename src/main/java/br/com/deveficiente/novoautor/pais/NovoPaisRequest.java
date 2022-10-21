@@ -17,4 +17,8 @@ public class NovoPaisRequest {
     public Pais toModel() {
         return new Pais(nome);
     }
+
+    public NovoPaisRequest(String nome) {
+        this.nome = nome;
+    }
 }

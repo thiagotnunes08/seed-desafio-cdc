@@ -18,6 +18,10 @@ public class EstadoPertenceAoPaisValidator implements Validator {
     @PersistenceContext
     private EntityManager manager;
 
+    public EstadoPertenceAoPaisValidator(EntityManager manager) {
+        this.manager = manager;
+    }
+
     @Override
     public boolean supports(Class<?> clazz) {
         return NovoCompraRequest.class.isAssignableFrom(clazz);
@@ -38,7 +42,7 @@ public class EstadoPertenceAoPaisValidator implements Validator {
             Optional<Pais> possivelPais = Optional.ofNullable(manager.find(Pais.class, request.getIdPais()));
 
             if (possivelEstado.isEmpty() || possivelPais.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"estado ou pais inválido!");
 
             }
 

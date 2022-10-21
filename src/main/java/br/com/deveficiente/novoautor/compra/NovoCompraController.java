@@ -1,6 +1,7 @@
 package br.com.deveficiente.novoautor.compra;
 
 import br.com.deveficiente.novoautor.cupom.CupomRepository;
+import br.com.deveficiente.novoautor.cupom.CupomValidoValidator;
 import br.com.deveficiente.novoautor.pais.EstadoPertenceAoPaisValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

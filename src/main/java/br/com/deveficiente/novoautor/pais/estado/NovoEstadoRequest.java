@@ -38,4 +38,9 @@ public class NovoEstadoRequest {
 
         return new Estado(nome,novoPais);
     }
+
+    public NovoEstadoRequest(String nome, Long pais) {
+        this.nome = nome;
+        this.pais = pais;
+    }
 }

@@ -24,12 +24,14 @@ import java.util.Optional;
 public class NovoLivroController {
 
     @PersistenceContext
-   private EntityManager manager;
+    private EntityManager manager;
 
     @PostMapping
+    @Transactional
     public void cadastra(@Valid @RequestBody NovoLivroRequest request) {
 
         Livro novoLivro = request.toModel(manager);
+
 
         manager.persist(novoLivro);
 

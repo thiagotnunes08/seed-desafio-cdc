@@ -15,10 +15,10 @@ import java.time.LocalDate;
 
 public class NovoLivroRequest {
 
-    @CampoExistente(message = "autor nao existente!",fieldName = "autorId",domainClass = Autor.class)
+    @CampoExistente(message = "autor nao existente!",fieldName = "id",domainClass = Autor.class)
     private Long autorId;
 
-    @CampoExistente(message = "categoria nao existente!",fieldName = "categoriaId",domainClass = Categoria.class)
+    @CampoExistente(message = "categoria nao existente!",fieldName = "id",domainClass = Categoria.class)
     private Long categoriaId;
     @NotBlank
     @CampoUnico(fieldName = "titulo",domainClass = Livro.class)
@@ -38,7 +38,7 @@ public class NovoLivroRequest {
     private String isbn;
     @NotNull
     @Future
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    //@JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataPublicacao;
 
     public Long getAutorId() {

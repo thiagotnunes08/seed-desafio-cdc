@@ -36,6 +36,8 @@ public class NovoLivroController {
         manager.persist(novoLivro);
 
 
+
+
     }
 
 }

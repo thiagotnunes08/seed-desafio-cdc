@@ -18,4 +18,14 @@ public class NovaCategoriaRequest {
     public Categoria toModel() {
         return new Categoria(nome);
     }
+
+    public NovaCategoriaRequest(String nome) {
+        this.nome = nome;
+    }
+
+    /**
+     * construtor vazio exclusivo do jackson
+     */
+    public NovaCategoriaRequest() {
+    }
 }

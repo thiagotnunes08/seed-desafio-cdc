@@ -1,7 +1,6 @@
 package br.com.deveficiente.novoautor.pais;
 
 import br.com.deveficiente.novoautor.compartilhado.CampoUnico;
-import br.com.deveficiente.novoautor.pais.estado.Estado;
 
 import javax.validation.constraints.NotBlank;
 
@@ -20,5 +19,12 @@ public class NovoPaisRequest {
 
     public NovoPaisRequest(String nome) {
         this.nome = nome;
+    }
+
+    /**
+     * @Deprecated: uso exclusivo do jackson
+     */
+    @Deprecated
+    public NovoPaisRequest() {
     }
 }

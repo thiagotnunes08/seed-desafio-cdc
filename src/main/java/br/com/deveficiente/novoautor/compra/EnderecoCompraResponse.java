@@ -3,9 +3,6 @@ package br.com.deveficiente.novoautor.compra;
 public class EnderecoCompraResponse {
 
     private String cidade;
-
-
-
     private String endereco;
     private String complemento;
     private String cep;
